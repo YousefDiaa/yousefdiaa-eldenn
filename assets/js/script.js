@@ -33,20 +33,21 @@ const testimonialsModalFunc = function () {
   overlay.classList.toggle("active");
 }
 
-// add click event to all modal items
+// Fix #2 — safe modal click with null-check
 for (let i = 0; i < testimonialsItem.length; i++) {
-
   testimonialsItem[i].addEventListener("click", function () {
 
-    modalImg.src = this.querySelector("[data-testimonials-avatar]").src;
-    modalImg.alt = this.querySelector("[data-testimonials-avatar]").alt;
-    modalTitle.innerHTML = this.querySelector("[data-testimonials-title]").innerHTML;
-    modalText.innerHTML = this.querySelector("[data-testimonials-text]").innerHTML;
+    const avatarEl = this.querySelector("[data-testimonials-avatar]");
+    if (avatarEl && modalImg) {
+      modalImg.src = avatarEl.src;
+      modalImg.alt = avatarEl.alt;
+    }
+
+    if (modalTitle) modalTitle.innerHTML = this.querySelector("[data-testimonials-title]").innerHTML;
+    if (modalText)  modalText.innerHTML  = this.querySelector("[data-testimonials-text]").innerHTML;
 
     testimonialsModalFunc();
-
   });
-
 }
 
 // add click event to modal close button
@@ -80,19 +81,18 @@ if (select) {
   const filterItems = document.querySelectorAll("[data-filter-item]");
 
   const filterFunc = function (selectedValue) {
+    // strip count badge text from the selected value (e.g. "all 7" → "all")
+    const cleanValue = selectedValue.replace(/\s*\d+\s*$/, '').trim();
 
     for (let i = 0; i < filterItems.length; i++) {
-
-      if (selectedValue === "all") {
+      if (cleanValue === "all") {
         filterItems[i].classList.add("active");
-      } else if (selectedValue === filterItems[i].dataset.category) {
+      } else if (cleanValue === filterItems[i].dataset.category) {
         filterItems[i].classList.add("active");
       } else {
         filterItems[i].classList.remove("active");
       }
-
     }
-
   }
 
   // add event in all filter button items for large screen
@@ -100,7 +100,6 @@ if (select) {
     let lastClickedBtn = filterBtn[0];
 
     for (let i = 0; i < filterBtn.length; i++) {
-
       filterBtn[i].addEventListener("click", function () {
 
         let selectedValue = this.innerText.toLowerCase();
@@ -112,7 +111,6 @@ if (select) {
         lastClickedBtn = this;
 
       });
-
     }
   }
 }
@@ -166,20 +164,96 @@ for (let i = 0; i < navigationLinks.length; i++) {
 
 // CV functionality
 const cvDownloadBtn = document.querySelector("#cvDownloadBtn");
-const cvFrame = document.querySelector("#cvFrame");
+const cvObject = document.querySelector("#cvFrame");
 
-// Set the CV file path (make sure you have a CV.pdf in your assets folder)
-const cvFilePath = "./assets/CV.pdf"; // Change this path to your CV file location
-cvFrame.src = cvFilePath;
+// Set the CV file path
+const cvFilePath = "./assets/CV.pdf";
+if (cvObject && cvObject.tagName === 'OBJECT') {
+  cvObject.data = cvFilePath;
+}
 
 // Add download functionality
 if (cvDownloadBtn) {
   cvDownloadBtn.addEventListener("click", function () {
     const link = document.createElement("a");
     link.href = cvFilePath;
-    link.download = "Yousef_Diaa_El_Denn_CV.pdf"; // Change filename as needed
+    link.download = "Yousef_Diaa_El_Denn_CV.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   });
+}
+
+
+
+// Fix #11 — Back to top button
+const backToTopBtn = document.querySelector("#backToTop");
+
+if (backToTopBtn) {
+  window.addEventListener("scroll", function () {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.add("visible");
+    } else {
+      backToTopBtn.classList.remove("visible");
+    }
+  });
+
+  backToTopBtn.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+
+
+// Fix #12 — Scroll-reveal for timeline items using IntersectionObserver
+const revealItems = document.querySelectorAll(".timeline-item");
+
+revealItems.forEach(item => item.classList.add("reveal"));
+
+if ("IntersectionObserver" in window) {
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+
+  document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+} else {
+  // fallback for older browsers — show all immediately
+  document.querySelectorAll(".reveal").forEach(el => el.classList.add("visible"));
+}
+
+
+
+// Fix #6 — Typing animation for sidebar name
+const typedNameEl = document.getElementById("typed-name");
+
+if (typedNameEl) {
+  const fullName = typedNameEl.textContent;
+  typedNameEl.textContent = "";
+
+  // Add blinking cursor
+  const cursor = document.createElement("span");
+  cursor.className = "typing-cursor";
+  typedNameEl.appendChild(cursor);
+
+  let charIndex = 0;
+
+  function typeChar() {
+    if (charIndex < fullName.length) {
+      typedNameEl.insertBefore(document.createTextNode(fullName[charIndex]), cursor);
+      charIndex++;
+      setTimeout(typeChar, 80);
+    }
+    // cursor keeps blinking after typing is done
+  }
+
+  // Start typing after a short delay on page load
+  setTimeout(typeChar, 600);
 }

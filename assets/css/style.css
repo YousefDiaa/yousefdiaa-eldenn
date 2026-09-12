@@ -2303,68 +2303,317 @@ textarea.form-input::-webkit-resizer {
     max-width: 700px;
   }
 
-  /**
-   * CV
-   */
+}
 
-  .cv-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-top: 20px;
+
+
+
+/*-----------------------------------*\
+  #GLOBAL ADDITIONS & UI IMPROVEMENTS
+\*-----------------------------------*/
+
+
+/**
+ * Fix #16 - CV & button styles (global, not 1250px-only)
+ */
+
+.cv-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.cv-viewer {
+  background: var(--jet);
+  border: 1px solid var(--jet);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-1);
+}
+
+.cv-viewer object {
+  display: block;
+  min-height: 500px;
+  width: 100%;
+}
+
+.cv-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 50px 20px;
+  text-align: center;
+  color: var(--light-gray);
+  font-size: var(--fs-6);
+}
+
+.cv-fallback ion-icon {
+  font-size: 48px;
+  color: var(--orange-yellow-crayola);
+}
+
+.cv-fallback a {
+  color: var(--orange-yellow-crayola);
+  text-decoration: underline;
+}
+
+.cv-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.btn-primary {
+  background: var(--orange-yellow-crayola);
+  color: var(--smoky-black);
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: var(--fw-600);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-size: var(--fs-6);
+}
+
+.btn-primary:hover {
+  background: var(--vegas-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-1);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn {
+  font-family: var(--ff-poppins);
+}
+
+.btn ion-icon {
+  font-size: 20px;
+}
+
+
+/**
+ * Fix #3 - Skill bar entrance animation using CSS variable
+ */
+
+.skill-progress-fill {
+  animation: fillBar 1.2s ease 0.4s both;
+}
+
+@keyframes fillBar {
+  from { width: 0; }
+  to   { width: var(--target-width, 0%); }
+}
+
+
+/**
+ * Fix #7 - Social icon brand hover colors
+ */
+
+.social-item:nth-child(1) .social-link:hover { color: #1877f2; } /* Facebook  */
+.social-item:nth-child(2) .social-link:hover { color: #e8e8e8; } /* GitHub    */
+.social-item:nth-child(3) .social-link:hover { color: #0077b5; } /* LinkedIn  */
+
+
+/**
+ * Fix #9 - Navbar active tab underline indicator
+ */
+
+.navbar-link {
+  position: relative;
+}
+
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--orange-yellow-crayola);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.navbar-link.active::after {
+  width: 55%;
+}
+
+
+/**
+ * Fix #10 - Article title underline entrance animation
+ */
+
+.article-title::after {
+  animation: expandLine 0.6s ease 0.2s both;
+}
+
+@keyframes expandLine {
+  from { width: 0; opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/**
+ * Fix #13 - Live status badge on project cards
+ */
+
+.status-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: var(--fw-500);
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+.status-badge.live {
+  background: hsla(140, 70%, 45%, 0.15);
+  color: #4ade80;
+  border: 1px solid hsla(140, 70%, 45%, 0.3);
+}
+
+
+/**
+ * Fix #17 - Filter button count badges
+ */
+
+.filter-count {
+  display: inline-block;
+  background: hsla(45, 100%, 71%, 0.15);
+  color: var(--orange-yellow-crayola);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 5px;
+  vertical-align: middle;
+  font-weight: var(--fw-500);
+}
+
+
+/**
+ * Fix #11 - Back to top floating button
+ */
+
+.back-to-top {
+  position: fixed;
+  bottom: 80px;
+  right: 15px;
+  width: 44px;
+  height: 44px;
+  background: var(--orange-yellow-crayola);
+  color: var(--smoky-black);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background 0.3s ease;
+  box-shadow: var(--shadow-2);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: var(--vegas-gold);
+  transform: translateY(-3px);
+}
+
+@media (min-width: 1024px) {
+  .back-to-top {
+    bottom: 30px;
+    right: 30px;
   }
+}
 
-  .cv-viewer {
-    background: var(--jet);
-    border: 1px solid var(--jet);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: var(--shadow-1);
-  }
 
-  .cv-viewer iframe {
-    display: block;
-    min-height: 600px;
-  }
+/**
+ * Fix #12 - Scroll-reveal for timeline items
+ */
 
-  .cv-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 15px;
-  }
+.reveal {
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
 
-  .btn-primary {
-    background: var(--orange-yellow-crayola);
-    color: var(--smoky-black);
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-weight: var(--fw-600);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    font-size: var(--fs-6);
-  }
+.reveal.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
 
-  .btn-primary:hover {
-    background: var(--vegas-gold);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-1);
-  }
+.reveal:nth-child(2) { transition-delay: 0.1s; }
+.reveal:nth-child(3) { transition-delay: 0.2s; }
+.reveal:nth-child(4) { transition-delay: 0.3s; }
+.reveal:nth-child(5) { transition-delay: 0.4s; }
 
-  .btn-primary:active {
-    transform: translateY(0);
-  }
 
-  .btn {
-    font-family: var(--ff-poppins);
-  }
+/**
+ * Fix #6 - Typing cursor blink animation
+ */
 
-  .btn ion-icon {
-    font-size: 20px;
-  }
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 0.85em;
+  background: var(--orange-yellow-crayola);
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+}
 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+
+/**
+ * Fix #1 - Project card thumbnail image container
+ */
+
+.project-img-container {
+  width: 100%;
+  height: 170px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  background: var(--onyx);
+  position: relative;
+}
+
+.project-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+}
+
+.project-item:hover .project-img-container img {
+  transform: scale(1.06);
 }
